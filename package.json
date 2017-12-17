@@ -13,12 +13,14 @@
     "prepare": "webpack"
   },
   "dependencies": {
+    "bluebird": "^3.5.1",
     "bson": "^1.0.4",
     "sift": "^5.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
+    "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
