@@ -59,6 +59,8 @@ export default Cheese;
 
 ### Querying Methods
 
+> **NB**: In all examples `Cheese` is a model created using the example above
+
 #### `find`
 
 ```js
@@ -108,8 +110,6 @@ A promise which resolves with the found document or null.
 #### Examples
 
 ```js
-// `Cheese` is a model created using the example above
-
 Cheese.find({ origin: 'Italy' })
   .then(records => console.log(records)); // returns an array of all records that have an origin of 'Italy'
 
