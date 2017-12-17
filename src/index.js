@@ -87,6 +87,28 @@ class ReactLocalMongoose {
     return this.findOne({ _id: id });
   }
 
+  update(params, data) {
+    delete data._id;
+    const collection = this.getCollection();
+
+    this.validate(data)
+      .then(data => {
+        const records = sift(params, collection);
+
+        records.forEach(record => {
+          Object.assign(record, data);
+        });
+
+        this.setCollection(collection);
+        return records;
+      });
+  }
+
+  findByIdAndUpdate(id, data) {
+    return this.update({ _id: id }, data)
+      .then(records => records.length ? records[0] : null);
+  }
+
   remove(params) {
     const collection = this.getCollection();
 
@@ -103,7 +125,7 @@ class ReactLocalMongoose {
     });
   }
 
-  removeById(id) {
+  findByIdAndRemove(id) {
     return this.remove({ _id: id });
   }
 

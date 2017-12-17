@@ -130,7 +130,7 @@ Cheese.create(data)
 
 #### Arguments
 
-- **data** _(Object|Array)_: An object containing the data to stored, or an array containing objects to be stored. Data will be validated before saving to localStorage.
+- **data** _(Object|Array)_: An object containing the data to be stored, or an array containing objects to be stored. Data will be validated before saving to localStorage.
 
 #### Return value
 
@@ -153,6 +153,54 @@ Cheese.create([
     { _id: '5a36be1b15301600007f38f8', name: 'Edam', origin: 'Netherlands', strength: 2 }
   ]
 */
+```
+
+---
+
+#### `update`
+
+```js
+Cheese.update(query, data)
+```
+
+#### Arguments
+
+- **query** _Object_: An object defining search params. Uses [sift](https://github.com/crcn/sift.js) for mongodb-esque queries
+- **data** _(Object|Array)_: An object containing the data to be updated.
+
+#### Return value
+
+A promise which resolves with the updated documents, and rejects with an error containing validation error messages.
+
+#### Example
+
+```js
+Cheese.update({ name: 'Gorgonzola' }, { origin: 'France' })
+  .then(records => console.log(records))); // [{ name: 'Gorgonzola', origin: 'France', strength: 4, image: '...', tastingNotes: '...' }]
+```
+
+---
+
+#### `findByIdAndUpdate`
+
+```js
+Cheese.findByIdAndUpdate(id, data)
+```
+
+#### Arguments
+
+- **id** _String_: The id of the document to find.
+- **data** _(Object|Array)_: An object containing the data to be updated.
+
+#### Return value
+
+A promise which resolves with the updated document, and rejects with an error containing validation error messages.
+
+#### Example
+
+```js
+Cheese.findByIdAndUpdate('5a36be1b15301600007f38f7', { origin: 'France' })
+  .then(records => console.log(records))); // [{ name: 'Gorgonzola', origin: 'France', strength: 4, image: '...', tastingNotes: '...' }]
 ```
 
 ---
@@ -195,7 +243,7 @@ A promise which resolves with `null`.
 #### Example
 
 ```js
-Cheese.removeById('5a36be1b15301600007f38f7')
+Cheese.findByIdAndRemove('5a36be1b15301600007f38f7')
   .then(() => console.log('Record removed'));
 ```
 
