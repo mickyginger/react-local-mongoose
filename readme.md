@@ -73,6 +73,8 @@ Cheese.find(query)
 
 A promise which resolves all documents that match the query.
 
+---
+
 #### `findOne`
 
 ```js
@@ -86,6 +88,8 @@ Cheese.findOne(query)
 #### Return value
 
 A promise which resolves with the first document that matches the query.
+
+---
 
 #### `findById`
 
@@ -115,6 +119,8 @@ Cheese.findOne({ origin: 'France' })
 Cheese.findById('5a36be1b15301600007f38f7')
   .then(record => console.log(record)); // returns the record with the id of '5a36be1b15301600007f38f7'
 ```
+
+---
 
 #### `create`
 
@@ -148,6 +154,8 @@ Cheese.create([
   ]
 */
 ```
+
+---
 
 #### `remove`
 
@@ -190,6 +198,8 @@ A promise which resolves with `null`.
 Cheese.removeById('5a36be1b15301600007f38f7')
   .then(() => console.log('Record removed'));
 ```
+
+---
 
 #### `drop`
 
