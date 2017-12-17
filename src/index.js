@@ -99,7 +99,7 @@ class ReactLocalMongoose {
       });
 
       this.setCollection(collection);
-      return resolve();
+      return resolve(null);
     });
   }
 
@@ -109,6 +109,7 @@ class ReactLocalMongoose {
 
   drop() {
     this.setCollection([]);
+    return true;
   }
 
 }
