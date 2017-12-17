@@ -226,10 +226,10 @@ Cheese.remove({ name: 'Gorgonzola' })
   .then(() => console.log('Record removed'));
 ```
 
-#### `removeById`
+#### `findByIdAndRemove`
 
 ```js
-Cheese.remove(id)
+Cheese.findByIdAndRemove(id)
 ```
 
 #### Arguments
