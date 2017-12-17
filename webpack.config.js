@@ -10,7 +10,9 @@ module.exports = {
       { test: /\.jsx?$/, loader: 'babel-loader', exclude: /node_modules/ }
     ]
   },
-  externals: {
-    react: 'commonjs react'
-  }
+  externals: [
+    'bson',
+    'sift',
+    'bluebird'
+  ]
 };
