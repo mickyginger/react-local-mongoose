@@ -57,6 +57,8 @@ const Cheese = new LocalDB(cheeseSchema, 'Cheese');
 export default Cheese;
 ```
 
+---
+
 ### Querying Methods
 
 > **NB**: In all examples `Cheese` is a model created using the example above
@@ -225,6 +227,8 @@ A promise which resolves with `null`.
 Cheese.remove({ name: 'Gorgonzola' })
   .then(() => console.log('Record removed'));
 ```
+
+---
 
 #### `findByIdAndRemove`
 
