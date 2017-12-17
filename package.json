@@ -10,7 +10,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "prepare": "webpack -p"
+    "prepare": "webpack"
   },
   "dependencies": {
     "bson": "^1.0.4",
