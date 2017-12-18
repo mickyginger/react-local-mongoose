@@ -1,0 +1,37 @@
+{
+  "name": "react-webpack-setup",
+  "version": "1.0.0",
+  "description": "A React and Webpack setup for WDI",
+  "main": "server.js",
+  "license": "MIT",
+  "engines": {
+    "node": "8.x.x"
+  },
+  "scripts": {
+    "start": "webpack-dev-server"
+  },
+  "dependencies": {
+    "font-awesome": "^4.7.0",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-router-dom": "^4.2.2",
+    "reactbulma": "^1.1.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.4",
+    "file-loader": "^0.11.2",
+    "html-webpack-plugin": "^2.29.0",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "url-loader": "^0.5.9",
+    "webpack": "^3.3.0",
+    "webpack-dev-server": "^2.5.1"
+  }
+}
