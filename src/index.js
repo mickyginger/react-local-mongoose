@@ -91,7 +91,7 @@ class ReactLocalMongoose {
     delete data._id;
     const collection = this.getCollection();
 
-    this.validate(data)
+    return this.validate(data)
       .then(data => {
         const records = sift(params, collection);
 
