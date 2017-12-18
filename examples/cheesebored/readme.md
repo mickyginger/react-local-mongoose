@@ -11,5 +11,5 @@
 
 ## Examples usage of `react-local-mongoose`
 
-Check out the `models` folder for creating the `Cheese` model using `react-local-mongoose`
-Check out `src/components/CheesesIndex`, `src/components/CheesesNew`, `src/components/CheesesEdit` for examples of the query API in action.
+- Check out the `models` folder for creating the `Cheese` model using `react-local-mongoose`
+- Check out `src/components/CheesesIndex`, `src/components/CheesesNew`, `src/components/CheesesEdit` for examples of the query API in action.
