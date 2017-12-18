@@ -4,6 +4,8 @@
 
 > NB: This package is not affiliated with Mongoose in any way. It is simply an attempt to match their API.
 
+This package has been heavily influenced by [LocalDB](https://github.com/kucukkanat/LocalDB) by [kucukkanat](https://github.com/kucukkanat).
+
 ### Installation
 
 Install with `npm` or `yarn`:
@@ -268,3 +270,22 @@ Cheese.drop()
 ```js
 Cheese.drop(); // true
 ```
+---
+
+## Limitations
+
+### Storage capacity
+
+The amount of data that can be stored is depended on device and browser. For more info check out these resources:
+
+- [Test of localStorage limits/quota](https://arty.name/localstorage.html)
+- [Working with quota on mobile browsers](https://www.html5rocks.com/en/tutorials/offline/quota-research/)
+- [How much data can a browser save in localStorage](https://stackoverflow.com/questions/10654148/how-much-data-can-a-browser-save-in-localstorage)
+
+### Embedded / Referenced Data
+
+Mongoose and Mongo allow for embedded schemas and references to other collections, with population functionality. I am considering adding this feature, though realistically this is not and will never be a full implementation of mongodb or mongoose on the client-side. Complex data structures are better persisted to an actual database.
+
+### Document Methods, Virtuals and other advanced Mongoose features
+
+Again, if you need mongooses advanced feature set, best use mongoose in conjunction with an API, and make requests via AJAX.

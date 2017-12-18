@@ -31,7 +31,7 @@ class ReactLocalMongoose {
         }
 
         // check for data type
-        if(data[key] && data[key].constructor !== Type) {
+        if(data[key] && Type !== ObjectID && data[key].constructor !== Type) {
           try {
             data[key] = Type(data[key]);
           } catch(e) {
