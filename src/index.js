@@ -2,6 +2,8 @@ import { ObjectID } from 'bson';
 import sift from 'sift';
 import Promise from 'bluebird';
 
+export { ObjectID };
+
 class ReactLocalMongoose {
   constructor(schema, name) {
     this.tableName = name.toLowerCase();
@@ -9,12 +11,41 @@ class ReactLocalMongoose {
     localStorage[this.tableName] = localStorage[this.tableName] || '[]';
   }
 
-  getCollection() {
-    return JSON.parse(localStorage[this.tableName]);
+  getCollection(tableName=this.tableName) {
+    return JSON.parse(localStorage[tableName]);
   }
 
   setCollection(collection) {
     localStorage[this.tableName] = JSON.stringify(collection);
+    return collection;
+  }
+
+  populate(records) {
+    const paths = Object.keys(this.schema).filter(path => {
+      if(this.schema[path].constructor === Array) return this.schema[path][0].type === ObjectID;
+      else return this.schema[path].type === ObjectID;
+    });
+
+    if(!paths.length) return records; // nothing to populate
+    if(records.constructor !== Array) records = [records];
+
+    paths.forEach(path => {
+      const collection = this.getCollection(this.schema[path].ref.toLowerCase());
+      records = records.map(record => {
+        let foreignRecords;
+        if(record[path].constructor === Array) {
+          foreignRecords = sift({ _id: { $in: record[path] } }, collection);
+        } else {
+          foreignRecords = sift({ _id: record[path] }, collection);
+          foreignRecords = foreignRecords.length ? foreignRecords[0] : null;
+        }
+
+        record[path] = foreignRecords;
+        return record;
+      });
+    });
+
+    return records;
   }
 
   validate(data) {
@@ -22,6 +53,12 @@ class ReactLocalMongoose {
     return new Promise((resolve, reject) => {
       // check for required keys
       const errors = {};
+
+      // remove data not present in schema
+      for(const key in data) {
+        if(key !== '_id' && !this.schema[key]) delete data[key];
+      }
+
       for(const key in this.schema) {
         const Type = this.schema[key].type;
 
@@ -46,11 +83,15 @@ class ReactLocalMongoose {
             errors[key] = typeof this.schema[key].unique === 'string' ? this.schema[key].unique : `Path \`${key}\` must be unique`;
           }
         }
-      }
 
-      for(const key in data) {
-        // remove data not present in schema
-        if(key !== '_id' && !this.schema[key]) delete data[key];
+        // convert referenced documents to ids
+        if(data[key] && Type === ObjectID) {
+          data[key] = data[key]._id || data[key];
+        }
+
+        if(data[key] && Type === Array && this.schema[key][0].type === ObjectID) {
+          data[key] = data[key].map(record => record._id || record);
+        }
       }
 
       if(Object.keys(errors).length) {
@@ -80,8 +121,9 @@ class ReactLocalMongoose {
   find(params) {
     return new Promise(resolve => {
       const collection = this.getCollection();
-      if(!params) return resolve(collection);
-      return resolve(sift(params, collection));
+      if(!params) return resolve(this.populate(collection));
+      const records = sift(params, collection);;
+      return resolve(this.populate(records));
     });
   }
 
