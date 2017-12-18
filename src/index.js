@@ -32,7 +32,11 @@ class ReactLocalMongoose {
 
         // check for data type
         if(data[key] && data[key].constructor !== Type) {
-          errors[key] = `Path ${key} is of type ${typeof data[key]} but should be ${Type.name.toLowerCase()}`;
+          try {
+            data[key] = Type(data[key]);
+          } catch(e) {
+            errors[key] = `Cannot convert ${typeof data[key]} to ${Type.name.toLowerCase()}`;
+          }
         }
 
         // check for unique keys
