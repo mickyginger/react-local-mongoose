@@ -42,7 +42,7 @@ class ReactLocalMongoose {
         // check for unique keys
         if(data[key] && this.schema[key].unique) {
           const dupe = sift({ [key]: data[key] }, collection);
-          if(data._id !== dupe._id) {
+          if(dupe && data._id !== dupe[0]._id) {
             errors[key] = typeof this.schema[key].unique === 'string' ? this.schema[key].unique : `Path \`${key}\` must be unique`;
           }
         }
