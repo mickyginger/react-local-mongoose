@@ -286,6 +286,23 @@ The amount of data that can be stored is depended on device and browser. For mor
 
 Mongoose and Mongo allow for embedded schemas and references to other collections, with population functionality. I am considering adding this feature, though realistically this is not and will never be a full implementation of mongodb or mongoose on the client-side. Complex data structures are better persisted to an actual database.
 
-### Document Methods, Virtuals and other advanced Mongoose features
+### Document methods, virtuals and other advanced Mongoose features
 
 Again, if you need mongooses advanced feature set, best use mongoose in conjunction with an API, and make requests via AJAX.
+
+## Contributing
+
+Contributions are very welcome.
+
+- Fork the repository
+- `yarn install` or `npm i` to install the dependencies
+- `yarn link` or `npm link` to make your local fork available to other local projects
+- `yarn link react-local-mongoose` or `npm link react-local-mongoose` in a local React project to test your updates
+- When you're happy make a PR!
+
+### To do
+
+- Write tests
+- Add embedded / referenced functionality
+- Cross-browser compatibility testing
+- Mobile device testing
