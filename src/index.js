@@ -40,8 +40,11 @@ class ReactLocalMongoose {
         }
 
         // check for unique keys
-        if(data[key] && this.schema[key].unique && sift({ [key]: data[key] }, collection).length > 0) {
-          errors[key] = typeof this.schema[key].unique === 'string' ? this.schema[key].unique : `Path \`${key}\` must be unique`;
+        if(data[key] && this.schema[key].unique) {
+          const dupe = sift({ [key]: data[key] }, collection);
+          if(data._id !== dupe._id) {
+            errors[key] = typeof this.schema[key].unique === 'string' ? this.schema[key].unique : `Path \`${key}\` must be unique`;
+          }
         }
       }
 
@@ -92,11 +95,11 @@ class ReactLocalMongoose {
   }
 
   update(params, data) {
-    delete data._id;
     const collection = this.getCollection();
 
     return this.validate(data)
       .then(data => {
+        delete data._id;
         const records = sift(params, collection);
 
         records.forEach(record => {
