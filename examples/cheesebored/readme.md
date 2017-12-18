@@ -9,7 +9,7 @@
 
 - Naviagte to `http://localhost:8000/seed` to add some cheeses to `localStorage`
 
-## Examples usage of `react-local-mongoose`
+## Example usage of `react-local-mongoose`
 
-- Check out the `models` folder for creating the `Cheese` model using `react-local-mongoose`
+- Check out the `src/models` folder for creating the `Cheese` model using `react-local-mongoose`
 - Check out `src/components/CheesesIndex`, `src/components/CheesesNew`, `src/components/CheesesEdit` for examples of the query API in action.
