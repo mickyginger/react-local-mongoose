@@ -32,7 +32,7 @@ describe('#findById tests', () => {
   });
 
   it('should return a promise', done => {
-    expect(Model.findById().constructor.name).to.eq('Promise');
+    expect(Model.findById(id).constructor.name).to.eq('Promise');
     done();
   });
 

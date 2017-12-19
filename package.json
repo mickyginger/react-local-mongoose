@@ -1,6 +1,6 @@
 {
   "name": "react-local-mongoose",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A mongoose-esq wrapper for localStorage",
   "main": "index.js",
   "author": "Mike Hayden <mickyginger@gmail.com>",

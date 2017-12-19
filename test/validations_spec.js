@@ -38,7 +38,7 @@ describe('validations tests', () => {
   it('should validate for required fields', done => {
     Model.create({})
       .catch(err => {
-        expect(err.errors.string).to.be.eq('This field is required');
+        expect(err.errors.string.required).to.be.eq('This field is required');
         done();
       });
   });
@@ -50,7 +50,7 @@ describe('validations tests', () => {
       date: '2015-01-10'
     })
       .catch(err => {
-        expect(err.errors.string).to.be.eq('That string has already been used');
+        expect(err.errors.string.unique).to.be.eq('That string has already been used');
         done();
       });
   });
@@ -58,7 +58,7 @@ describe('validations tests', () => {
   it('should return a custom error messages if supplied', done => {
     Model.create({})
       .catch(err => {
-        expect(err.errors.string).to.be.eq('This field is required');
+        expect(err.errors.string.required).to.be.eq('This field is required');
         done();
       });
   });
@@ -66,7 +66,7 @@ describe('validations tests', () => {
   it('should return a generic message if not', done => {
     Model.create({})
       .catch(err => {
-        expect(err.errors.number).to.be.eq('Path `number` is required');
+        expect(err.errors.number.required).to.be.eq('Path `number` is required.');
         done();
       });
   });

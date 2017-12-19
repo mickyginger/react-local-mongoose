@@ -34,7 +34,7 @@ describe('#findByIdAndUpdate tests', () => {
   });
 
   it('should return a promise', done => {
-    expect(Model.findByIdAndUpdate().constructor.name).to.eq('Promise');
+    expect(Model.findByIdAndUpdate(id).constructor.name).to.eq('Promise');
     done();
   });
 

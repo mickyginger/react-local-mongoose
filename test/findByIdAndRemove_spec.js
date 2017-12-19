@@ -33,7 +33,7 @@ describe('#findByIdAndRemove tests', () => {
   });
 
   it('should return a promise', done => {
-    expect(Model.findByIdAndRemove().constructor.name).to.eq('Promise');
+    expect(Model.findByIdAndRemove(id).constructor.name).to.eq('Promise');
     done();
   });
 
