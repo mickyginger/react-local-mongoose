@@ -1,5 +1,8 @@
 # React Local Mongoose
 
+[![Travis Build Status](https://travis-ci.org/mickyginger/react-local-mongoose.svg?branch=1.1.1)](https://travis-ci.org/mickyginger/react-local-mongoose)
+[![npm version](https://badge.fury.io/js/react-local-mongoose.svg)](https://badge.fury.io/js/react-local-mongoose)
+
 ## A mongoose-esque wrapper for localStorage
 
 > NB: This package is not affiliated with Mongoose in any way. It is simply an attempt to match their API.
