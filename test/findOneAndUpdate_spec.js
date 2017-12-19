@@ -49,7 +49,7 @@ describe('#findOneAndUpdate tests', () => {
       });
   });
 
-  xit('should return the correct values', done => {
+  it('should return the correct values', done => {
     Model.findOneAndUpdate({ string: { $exists: true } }, seedData[1])
       .then(record => {
         expect(record.string).to.eq(seedData[1].string);
@@ -59,7 +59,7 @@ describe('#findOneAndUpdate tests', () => {
       });
   });
 
-  xit('should return the correct data types', done => {
+  it('should return the correct data types', done => {
     Model.findOneAndUpdate({ string: { $exists: true } }, seedData[1])
       .then(record => {
         expect(record._id).to.be.a('string');

@@ -93,11 +93,11 @@ class ReactLocalMongoose {
     const Type = isArray ? this.schema[key][0].type : this.schema[key].type;
     if(isArray) {
       data[key] = data[key].map(data => {
-        if(Type !== ObjectID) return Type === Date ? new Date(data) : Type(data);
+        if(Type !== ObjectID) return Type === Date ? (new Date(data)).toISOString() : Type(data);
         return data;
       });
     } else if(Type !== ObjectID){
-      data[key] = Type === Date ? new Date(data[key]) : Type(data[key]);
+      data[key] = Type === Date ? (new Date(data[key])).toISOString() : Type(data[key]);
     }
   }
 
@@ -237,7 +237,7 @@ class ReactLocalMongoose {
   // update a single record by id
   findOneAndUpdate(query, data) {
     return this.findOne(query)
-      .then(record => this.findByIdAndUpdate(record._id, query));
+      .then(record => this.findByIdAndUpdate(record._id, data));
   }
 
   // remove records

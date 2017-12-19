@@ -79,10 +79,10 @@ describe('#create tests', () => {
       .then(records => {
         expect(records[0].string).to.eq(seedData[0].string);
         expect(records[0].number).to.eq(seedData[0].number);
-        expect(records[0].date.toString()).to.eq((new Date(seedData[0].date)).toString());
+        expect(records[0].date).to.eq((new Date(seedData[0].date)).toISOString());
         expect(records[1].string).to.eq(seedData[1].string);
         expect(records[1].number).to.eq(seedData[1].number);
-        expect(records[1].date.toString()).to.eq((new Date(seedData[1].date)).toString());
+        expect(records[1].date).to.eq((new Date(seedData[1].date)).toISOString());
         done();
       });
   });
@@ -93,11 +93,11 @@ describe('#create tests', () => {
         expect(records[0]._id).to.be.a('string');
         expect(records[0].string).to.be.a('string');
         expect(records[0].number).to.be.a('number');
-        expect(records[0].date.constructor).be.eq(Date);
+        expect(records[0].date).to.be.a('string');
         expect(records[1]._id).to.be.a('string');
         expect(records[1].string).to.be.a('string');
         expect(records[1].number).to.be.a('number');
-        expect(records[1].date.constructor).be.eq(Date);
+        expect(records[1].date).to.be.a('string');
         done();
       });
   });

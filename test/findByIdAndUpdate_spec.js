@@ -59,12 +59,12 @@ describe('#findByIdAndUpdate tests', () => {
       .then(record => {
         expect(record.string).to.eq(seedData[1].string);
         expect(record.number).to.eq(seedData[1].number);
-        expect(record.date.toString()).to.eq((new Date(seedData[1].date)).toString());
+        expect(record.date).to.eq((new Date(seedData[1].date)).toISOString());
         done();
       });
   });
 
-  xit('should return the correct data types', done => {
+  it('should return the correct data types', done => {
     Model.findByIdAndUpdate(id, seedData[1])
       .then(record => {
         expect(record._id).to.be.a('string');

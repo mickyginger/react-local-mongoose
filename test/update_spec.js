@@ -49,17 +49,17 @@ describe('#update tests', () => {
       });
   });
 
-  xit('should return the correct values', done => {
+  it('should return the correct values', done => {
     Model.update({ string: 'abc' }, seedData[1])
       .then(records => {
         expect(records[0].string).to.eq(seedData[1].string);
         expect(records[0].number).to.eq(seedData[1].number);
-        expect(records[0].date).to.eq((new Date(seedData[0].date)).toISOString());
+        expect(records[0].date).to.eq((new Date(seedData[1].date)).toISOString());
         done();
       });
   });
 
-  xit('should return the correct data types', done => {
+  it('should return the correct data types', done => {
     Model.update({ string: 'abc' }, seedData[1])
       .then(records => {
         expect(records[0]._id).to.be.a('string');

@@ -313,7 +313,7 @@ Contributions are very welcome.
 
 ### To do
 
-- Write tests
+- ~~Write tests~~
 - Add embedded / ~~referenced~~ functionality
 - Cross-browser compatibility testing
 - Mobile device testing
