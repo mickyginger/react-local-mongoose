@@ -93,16 +93,18 @@ class ReactLocalMongoose {
     const Type = isArray ? this.schema[key][0].type : this.schema[key].type;
     if(isArray) {
       data[key] = data[key].map(data => {
-        return Type !== ObjectID ? Type(data) : data;
+        if(Type !== ObjectID) return Type === Date ? new Date(data) : Type(data);
+        return data;
       });
-    } else {
-      data[key] = Type !== ObjectID ? Type(data[key]) : data[key];
+    } else if(Type !== ObjectID){
+      data[key] = Type === Date ? new Date(data[key]) : Type(data[key]);
     }
   }
 
   // check whether the value has already been used in the collection
   // NB: if the data is an array, do not check for uniqueness
   checkUnique(key, data, errors, collection) {
+
     const isArray = this.schema[key].constructor === Array;
 
     if(data[key] && !isArray && this.schema[key].unique) {
@@ -159,11 +161,12 @@ class ReactLocalMongoose {
   }
 
   // create records
-  create(data) {
+  create(data={}) {
     const collection = this.getCollection();
+    const isArray = data.constructor === Array;
 
     // if the data is not an array, put it in an array to normalize the following functionality
-    if(data.constructor !== Array) data = [data];
+    if(!isArray) data = [data];
 
     // create an array of validation promises for the array of data
     const validations = data.map(data => {
@@ -174,7 +177,10 @@ class ReactLocalMongoose {
 
     // once the validations have passed, store the data in localStorage
     return Promise.all(validations)
-      .then(data => this.setCollection(collection.concat(data)));
+      .then(data => {
+        this.setCollection(collection.concat(data));
+        return isArray ? data : data[0];
+      });
   }
 
   // find a record
@@ -185,7 +191,7 @@ class ReactLocalMongoose {
       // if there is no query, return the whole collection, after population
       if(!query) return resolve(this.populate(collection));
       // otherwise use sift to find the matched records
-      const records = sift(query, collection);;
+      const records = sift(query, collection);
       // return the populated records
       return resolve(this.populate(records));
     });
@@ -228,6 +234,12 @@ class ReactLocalMongoose {
       .then(records => records.length ? records[0] : null);
   }
 
+  // update a single record by id
+  findOneAndUpdate(query, data) {
+    return this.findOne(query)
+      .then(record => this.findByIdAndUpdate(record._id, query));
+  }
+
   // remove records
   remove(query) {
     // et the collection and find the matching records using sift
@@ -250,6 +262,11 @@ class ReactLocalMongoose {
   // remove a record by id
   findByIdAndRemove(id) {
     return this.remove({ _id: id });
+  }
+
+  findOneAndRemove(query) {
+    return this.findOne(query)
+      .then(record => this.findByIdAndRemove(record._id));
   }
 
   // re-set the collection to an empty array
