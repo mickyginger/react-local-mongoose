@@ -285,7 +285,7 @@ class ReactLocalMongoose {
 
 
   findOneAndRemove(query={}) {
-    // et the collection and find the matching records using sift
+    // get the collection and find the matching records using sift
     const collection = this.getCollection();
     const record = sift(query, collection)[0];
 
@@ -306,9 +306,9 @@ class ReactLocalMongoose {
     return this.remove({ _id: id });
   }
 
-  // re-set the collection to an empty array
+  // delete the collection from localStorage
   drop() {
-    this.setCollection([]);
+    delete localStorage[this.tableName.toLowerCase()];
     return true;
   }
 
