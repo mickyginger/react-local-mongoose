@@ -4,19 +4,37 @@ import { expect } from 'chai';
 import LocalDb from '../src';
 
 const schema = {
-  string: { type: String, required: 'This field is required', unique: 'That string has already been used' },
-  number: { type: Number, required: true, unique: true }
+  string: {
+    type: String,
+    required: 'This field is required',
+    unique: 'That string has already been used',
+    maxlength: 5,
+    minlength: 4,
+    enum: ['Mork', 'Mindy'],
+    pattern: /M[a-z]{3,4}/
+  },
+  number: {
+    type: Number,
+    required: true,
+    unique: true,
+    max: 10,
+    min: 5
+  },
+  date: {
+    type: Date,
+    required: true
+  }
 };
 
 const Model = new LocalDb(schema, 'Model');
 
 const seedData = [{
-  string: 'abc',
-  number: 123,
+  string: 'Mork',
+  number: 5,
   date: '2015-01-10'
 }, {
-  string: 'def',
-  number: 456,
+  string: 'Mindy',
+  number: 10,
   date: '1981-06-01'
 }];
 
@@ -24,7 +42,8 @@ describe('validations tests', () => {
   before(done => {
     Model.drop();
     Model.create(seedData)
-      .then(() => done());
+      .then(() => done())
+      .catch(done);
   });
 
   it('should reject with errors object', done => {
@@ -45,9 +64,7 @@ describe('validations tests', () => {
 
   it('should validate for unique fields', done => {
     Model.create({
-      string: 'abc',
-      number: 123,
-      date: '2015-01-10'
+      string: 'Mork'
     })
       .catch(err => {
         expect(err.errors.string.unique).to.be.eq('That string has already been used');
@@ -67,6 +84,32 @@ describe('validations tests', () => {
     Model.create({})
       .catch(err => {
         expect(err.errors.number.required).to.be.eq('Path `number` is required.');
+        done();
+      });
+  });
+
+  it('should validate for min minlength enum and pattern', done => {
+    Model.create({
+      number: 1,
+      string: 'abc'
+    })
+      .catch(err => {
+        expect(err.errors.number.min).to.eq('Path `number` is too small');
+        expect(err.errors.string.minlength).to.eq('Path `string` is too short');
+        expect(err.errors.string.enum).to.eq('Path `string` is invalid');
+        expect(err.errors.string.pattern).to.eq('Path `string` is invalid');
+        done();
+      });
+  });
+
+  it('should validate for maxlength max', done => {
+    Model.create({
+      number: 100000,
+      string: 'abcdefghijklmnopqrstuvwxyz'
+    })
+      .catch(err => {
+        expect(err.errors.number.max).to.eq('Path `number` is too large');
+        expect(err.errors.string.maxlength).to.eq('Path `string` is too long');
         done();
       });
   });

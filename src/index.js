@@ -81,20 +81,61 @@ class ReactLocalMongoose {
     for(const path in data) if(!this.schema[path] && path !== '_id') delete data[path];
 
     for(const path in this.schema) {
-      const { ref, type, required, unique } = this.schema[path] instanceof Array ? this.schema[path][0] : this.schema[path];
+      const {
+        ref,
+        type,
+        required,
+        unique,
+        enum: _enum,
+        pattern,
+        max,
+        min,
+        maxlength,
+        minlength
+      } = this.schema[path] instanceof Array ? this.schema[path][0] : this.schema[path];
       const value = data[path];
 
       // required
       if(required && !value) {
         const message = typeof required === 'string' ? required : `Path \`${path}\` is required.`;
-        Object.assign(errors, { [path]: { required: message } });
+        errors[path] = Object.assign(errors[path] || {}, { required: message });
       }
 
       // unique
       if(unique && value) {
         const message = typeof required === 'string' ? unique : `Path \`${path}\` must be unique.`;
         const dupes = sift({ [path]: value }, this.getCollection());
-        if(dupes.length && dupes[0]._id !== data._id) Object.assign(errors, { [path]: { unique: message } });
+        if(dupes.length && dupes[0]._id !== data._id) errors[path] = Object.assign(errors[path] || {}, { unique: message });
+      }
+
+      // enum
+      if(_enum && value && _enum instanceof Array && !_enum.includes(value)) {
+        errors[path] = Object.assign(errors[path] || {}, { enum: `Path \`${path}\` is invalid` });
+      }
+
+      // pattern
+      if(pattern && value && pattern instanceof RegExp && !pattern.test(value)) {
+        errors[path] = Object.assign(errors[path] || {}, { pattern: `Path \`${path}\` is invalid` });
+      }
+
+      // max
+      if(max && value && typeof value === 'number' && value > max) {
+        errors[path] = Object.assign(errors[path] || {}, { max: `Path \`${path}\` is too large` });
+      }
+
+      // min
+      if(min && value && typeof value === 'number' && value < min) {
+        errors[path] = Object.assign(errors[path] || {}, { min: `Path \`${path}\` is too small` });
+      }
+
+      // maxlength
+      if(maxlength && value && typeof value === 'string' && value.length > maxlength) {
+        errors[path] = Object.assign(errors[path] || {}, { maxlength: `Path \`${path}\` is too long` });
+      }
+
+      // minlength
+      if(minlength && value && typeof value === 'string' && value.length < minlength) {
+        errors[path] = Object.assign(errors[path] || {}, { minlength: `Path \`${path}\` is too short` });
       }
 
       // coerce the data to the type specified in the schema
