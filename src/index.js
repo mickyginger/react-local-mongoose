@@ -25,7 +25,7 @@ class ReactLocalMongoose {
 
   // populate references
   populate(records) {
-    const isArray = records instanceof Array
+    const isArray = records instanceof Array;
     // if records is not an array, put it in an array to normalize the following functionality
     records = isArray ? records : [records];
 
@@ -82,10 +82,10 @@ class ReactLocalMongoose {
       // if the path is an object, then we have an embedded schema
       // need to validate the data in the object, and assign an ObjectID
       if(schema[path].constructor === Object && data[path] && data[path].constructor === Object) {
-        errors[path] = Object.assign(this.validate(data[path], schema[path]));
+        errors[path] = Object.assign(errors[path] || {}, this.validate(data[path], schema[path]));
         continue;
       }
-
+      console.log(errors);
       // if the path is an array, and there is an object at index 0 in the schema, we have an array of embedded objects
       // need to loop through the array and validate each object
       if(schema[path].constructor === Array && schema[path][0].constructor === Object && data[path] && data[path].constructor === Array) {
@@ -94,7 +94,6 @@ class ReactLocalMongoose {
       }
 
       const {
-        ref,
         type,
         required,
         unique,
@@ -169,18 +168,6 @@ class ReactLocalMongoose {
     }
 
     return Object.keys(errors).length ? errors : null;
-
-    // return new Promise((resolve, reject) => {
-    //   // if the validations have failed reject the promise with an error
-    //   if(Object.keys(errors).length) {
-    //     const err = new Error('Validation Failed');
-    //     err.errors = errors;
-    //     return reject(err);
-    //   }
-    //
-    //   // otherwise resolve with the data
-    //   return resolve(data);
-    // });
   }
 
   // create records
@@ -205,15 +192,8 @@ class ReactLocalMongoose {
       }
 
       this.setCollection(collection.concat(data));
-      return resolve(data);
+      return resolve(data.length === 1 ? data[0] : data);
     });
-
-    // // once the validations have passed, store the data in localStorage
-    // return Promise.all(validations)
-    //   .then(data => {
-    //     this.setCollection(collection.concat(data));
-    //     return data.length === 1 ? data[0] : data;
-    //   });
   }
 
   makeQuery(query) {

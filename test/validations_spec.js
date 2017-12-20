@@ -31,7 +31,7 @@ const schema = {
       string: { type: String, required: true },
       reference: { type: ObjectID, ref: 'Other' },
       embedded: {
-        string: { type: String, required: true },
+        string: { type: String },
         reference: { type: ObjectID, ref: 'Other' }
       }
     }
@@ -66,10 +66,9 @@ describe('validations tests', () => {
       .catch(done);
   });
 
-  it.only('should reject with errors object', done => {
+  it('should reject with errors object', done => {
     Model.create()
       .catch(err => {
-        console.dir(err.errors, { depth: null });
         expect(err.errors).to.be.an('object');
         done();
       });
@@ -131,6 +130,21 @@ describe('validations tests', () => {
       .catch(err => {
         expect(err.errors.number.max).to.eq('Path `number` is too large');
         expect(err.errors.string.maxlength).to.eq('Path `string` is too long');
+        done();
+      });
+  });
+
+  it('should validated embedded objects', done => {
+    Model.create({
+      embedded: {
+        embedded: {
+          embedded: {}
+        }
+      }
+    })
+      .catch(err => {
+        expect(err.errors.embedded.string.required).to.eq('Path `string` is required.');
+        expect(err.errors.embedded.embedded.string.required).to.eq('Path `string` is required.');
         done();
       });
   });
