@@ -73,14 +73,26 @@ class ReactLocalMongoose {
   }
 
   // validate the data
-  validate(data) {
-    data = this.convertDocsToRefs(data);
+  validate(data, schema=this.schema) {
     const errors = {};
-
     // remove data not in schema
-    for(const path in data) if(!this.schema[path] && path !== '_id') delete data[path];
+    for(const path in data) if(!schema[path] && path !== '_id') delete data[path];
 
-    for(const path in this.schema) {
+    for(const path in schema) {
+      // if the path is an object, then we have an embedded schema
+      // need to validate the data in the object, and assign an ObjectID
+      if(schema[path].constructor === Object && data[path] && data[path].constructor === Object) {
+        errors[path] = Object.assign(this.validate(data[path], schema[path]));
+        continue;
+      }
+
+      // if the path is an array, and there is an object at index 0 in the schema, we have an array of embedded objects
+      // need to loop through the array and validate each object
+      if(schema[path].constructor === Array && schema[path][0].constructor === Object && data[path] && data[path].constructor === Array) {
+        if(data[path].length) errors[path] = data[path].map(value => this.validate(value, schema[path][0]));
+        continue;
+      }
+
       const {
         ref,
         type,
@@ -92,7 +104,7 @@ class ReactLocalMongoose {
         min,
         maxlength,
         minlength
-      } = this.schema[path] instanceof Array ? this.schema[path][0] : this.schema[path];
+      } = schema[path] instanceof Array ? schema[path][0] : schema[path];
       const value = data[path];
 
       // required
@@ -101,40 +113,43 @@ class ReactLocalMongoose {
         errors[path] = Object.assign(errors[path] || {}, { required: message });
       }
 
+      // once we've checked for required, if there's not data supplied, there's no point going any further
+      if(!value) continue;
+
       // unique
-      if(unique && value) {
+      if(unique) {
         const message = typeof required === 'string' ? unique : `Path \`${path}\` must be unique.`;
         const dupes = sift({ [path]: value }, this.getCollection());
         if(dupes.length && dupes[0]._id !== data._id) errors[path] = Object.assign(errors[path] || {}, { unique: message });
       }
 
       // enum
-      if(_enum && value && _enum instanceof Array && !_enum.includes(value)) {
+      if(_enum && _enum instanceof Array && !_enum.includes(value)) {
         errors[path] = Object.assign(errors[path] || {}, { enum: `Path \`${path}\` is invalid` });
       }
 
       // pattern
-      if(pattern && value && pattern instanceof RegExp && !pattern.test(value)) {
+      if(pattern && pattern instanceof RegExp && !pattern.test(value)) {
         errors[path] = Object.assign(errors[path] || {}, { pattern: `Path \`${path}\` is invalid` });
       }
 
       // max
-      if(max && value && typeof value === 'number' && value > max) {
+      if(max && typeof value === 'number' && value > max) {
         errors[path] = Object.assign(errors[path] || {}, { max: `Path \`${path}\` is too large` });
       }
 
       // min
-      if(min && value && typeof value === 'number' && value < min) {
+      if(min && typeof value === 'number' && value < min) {
         errors[path] = Object.assign(errors[path] || {}, { min: `Path \`${path}\` is too small` });
       }
 
       // maxlength
-      if(maxlength && value && typeof value === 'string' && value.length > maxlength) {
+      if(maxlength && typeof value === 'string' && value.length > maxlength) {
         errors[path] = Object.assign(errors[path] || {}, { maxlength: `Path \`${path}\` is too long` });
       }
 
       // minlength
-      if(minlength && value && typeof value === 'string' && value.length < minlength) {
+      if(minlength && typeof value === 'string' && value.length < minlength) {
         errors[path] = Object.assign(errors[path] || {}, { minlength: `Path \`${path}\` is too short` });
       }
 
@@ -153,17 +168,19 @@ class ReactLocalMongoose {
       }
     }
 
-    return new Promise((resolve, reject) => {
-      // if the validations have failed reject the promise with an error
-      if(Object.keys(errors).length) {
-        const err = new Error('Validation Failed');
-        err.errors = errors;
-        return reject(err);
-      }
+    return Object.keys(errors).length ? errors : null;
 
-      // otherwise resolve with the data
-      return resolve(data);
-    });
+    // return new Promise((resolve, reject) => {
+    //   // if the validations have failed reject the promise with an error
+    //   if(Object.keys(errors).length) {
+    //     const err = new Error('Validation Failed');
+    //     err.errors = errors;
+    //     return reject(err);
+    //   }
+    //
+    //   // otherwise resolve with the data
+    //   return resolve(data);
+    // });
   }
 
   // create records
@@ -174,18 +191,29 @@ class ReactLocalMongoose {
     if(!(data instanceof Array)) data = [data];
 
     // create an array of validation promises for the array of data
-    const validations = data.map(data => {
+    const errors = data.reduce((errors, data) => {
       // create an id for each record
       data._id = data._id || ObjectID().toString();
-      return this.validate(data);
+      return Object.assign(errors, this.validate(data));
+    }, {});
+
+    return new Promise((resolve, reject) => {
+      if(Object.keys(errors).length) {
+        const err = new Error('Validation Failed');
+        err.errors = errors;
+        return reject(err);
+      }
+
+      this.setCollection(collection.concat(data));
+      return resolve(data);
     });
 
-    // once the validations have passed, store the data in localStorage
-    return Promise.all(validations)
-      .then(data => {
-        this.setCollection(collection.concat(data));
-        return data.length === 1 ? data[0] : data;
-      });
+    // // once the validations have passed, store the data in localStorage
+    // return Promise.all(validations)
+    //   .then(data => {
+    //     this.setCollection(collection.concat(data));
+    //     return data.length === 1 ? data[0] : data;
+    //   });
   }
 
   makeQuery(query) {

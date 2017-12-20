@@ -1,7 +1,7 @@
 /* global describe, it, before */
 
 import { expect } from 'chai';
-import LocalDb from '../src';
+import LocalDb, { ObjectID } from '../src';
 
 const schema = {
   string: {
@@ -23,7 +23,27 @@ const schema = {
   date: {
     type: Date,
     required: true
-  }
+  },
+  embedded: {
+    string: { type: String, required: true },
+    reference: { type: ObjectID, ref: 'Other' },
+    embedded: {
+      string: { type: String, required: true },
+      reference: { type: ObjectID, ref: 'Other' },
+      embedded: {
+        string: { type: String, required: true },
+        reference: { type: ObjectID, ref: 'Other' }
+      }
+    }
+  },
+  embeddedArray: [{
+    string: { type: String, required: true },
+    reference: { type: ObjectID, ref: 'Other' },
+    embeddedArray: [{
+      string: { type: String, required: true },
+      reference: { type: ObjectID, ref: 'Other' }
+    }]
+  }]
 };
 
 const Model = new LocalDb(schema, 'Model');
@@ -46,9 +66,10 @@ describe('validations tests', () => {
       .catch(done);
   });
 
-  it('should reject with errors object', done => {
-    Model.create({})
+  it.only('should reject with errors object', done => {
+    Model.create()
       .catch(err => {
+        console.dir(err.errors, { depth: null });
         expect(err.errors).to.be.an('object');
         done();
       });
