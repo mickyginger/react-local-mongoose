@@ -85,7 +85,7 @@ class ReactLocalMongoose {
         errors[path] = Object.assign(errors[path] || {}, this.validate(data[path], schema[path]));
         continue;
       }
-      console.log(errors);
+
       // if the path is an array, and there is an object at index 0 in the schema, we have an array of embedded objects
       // need to loop through the array and validate each object
       if(schema[path].constructor === Array && schema[path][0].constructor === Object && data[path] && data[path].constructor === Array) {
@@ -167,6 +167,8 @@ class ReactLocalMongoose {
       }
     }
 
+    // might need to loop through error object and remove any empty objects
+    // might be worth writing an isEmpty function for arrays|objects..?
     return Object.keys(errors).length ? errors : null;
   }
 
